@@ -20,10 +20,10 @@ Executable hat
                      time >= 1.4, 
                      old-locale >= 1.0.0.4,
                      random >= 1.0.1.1
-  hs-source-dirs:    src
+  hs-source-dirs:    src, src/HAT
 test-suite hat-tests
   type:              exitcode-stdio-1.0
-  hs-source-dirs:    test/HAT
+  hs-source-dirs:    src, test/HAT
   main-is:           JSONTests.hs
   build-depends:     base >= 3 && < 5, 
                      QuickCheck, 
