@@ -18,10 +18,32 @@ personJsonObj = makeObj [
     ("surname", JSString $ toJSString $ surname person)
   ]
 
+-- Encoding and decoding
+
 personJsonStr :: String
 personJsonStr = encode personJsonObj
 
+personJsonStrictStr :: String
 personJsonStrictStr = encodeStrict personJsonObj
+
+(Ok personJsonObj')  = decode personJsonStr :: Result JSValue
+(Ok personJsonObj'') = decode personJsonStrictStr :: Result JSValue
+
+(Ok personJsonObj''')  = decodeStrict personJsonStr :: Result JSValue
+(Ok personJsonObj'''') = decodeStrict personJsonStrictStr :: Result JSValue
+
+-- Wrapper types
+
+jsObj :: JSObject Integer
+jsObj = toJSObject [("first", 1), ("second", 2)]
+
+jsStr = encode jsObj
+
+-- Serialization to and from JSON values
+
+(Ok person')      = readJSON personJsonObj :: Result Person
+
+-- Tests
 
 tests = [
     testGroup "JSON encoding" [
@@ -30,6 +52,25 @@ tests = [
       ),
       testCase "Strict encoding" (
         assertEqual'  "{\"name\":\"Marek\",\"surname\":\"Dudek\"}"  personJsonStrictStr 
+      )
+    ],
+    testGroup "JSON encoding" [
+      testCase "Decoding" (
+        assertEqual' personJsonObj personJsonObj'
+      ),
+      testCase "Decoding strict result" (
+        assertEqual' personJsonObj personJsonObj''
+      ),
+      testCase "Strict decoding" (
+        assertEqual' personJsonObj personJsonObj'''
+      ),
+      testCase "Strict decoding strict result" (
+        assertEqual' personJsonObj personJsonObj''''
+      )
+    ],
+    testGroup "Serialization from JSON object" [
+      testCase "Decoding" (
+        assertEqual' person person'
       )
     ]
   ]
