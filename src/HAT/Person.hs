@@ -10,6 +10,7 @@ data Person = Person {
 
 
 instance JSON Person where
+
   readJSON (JSObject obj) = (
       Ok Person {
         name    = getField "name",
@@ -20,6 +21,7 @@ instance JSON Person where
           let (Ok value) = field `valFromObj` obj in 
           value 
 
-  showJSON = undefined
-  readJSONs = undefined
-  showJSONs = undefined
+  showJSON person = makeObj [
+      ("name",    JSString $ toJSString $ name person),
+      ("surname", JSString $ toJSString $ surname person)
+    ] 

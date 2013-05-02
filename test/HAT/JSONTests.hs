@@ -41,7 +41,9 @@ jsStr = encode jsObj
 
 -- Serialization to and from JSON values
 
-(Ok person')      = readJSON personJsonObj :: Result Person
+(Ok readPerson) = readJSON personJsonObj :: Result Person
+
+shownPerson = showJSON person
 
 -- Tests
 
@@ -68,9 +70,12 @@ tests = [
         assertEqual' personJsonObj personJsonObj''''
       )
     ],
-    testGroup "Serialization from JSON object" [
-      testCase "Decoding" (
-        assertEqual' person person'
+    testGroup "Serialization from and to JSON object" [
+      testCase "Serialization from JSON" (
+        assertEqual' person readPerson
+      ),
+      testCase "Serialization to JSON" (
+        assertEqual' personJsonObj shownPerson
       )
     ]
   ]
