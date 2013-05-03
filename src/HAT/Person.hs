@@ -12,7 +12,7 @@ data Person = Person {
 instance JSON Person where
 
   readJSON (JSObject obj) = (
-      Ok Person {
+      return Person {
         name    = getField "name",
         surname = getField "surname"
       }
