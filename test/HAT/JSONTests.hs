@@ -1,9 +1,11 @@
-module Main where
+module HAT.JSONTests where
 
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
 import Test.HUnit
+
+import HAT.TestUtils
 
 import Text.JSON
 import Text.JSON.String
@@ -107,7 +109,3 @@ tests = [
       )
     ]
   ]
- 
-main = defaultMain tests
-
-assertEqual' expected actual = assertEqual "" expected actual

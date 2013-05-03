@@ -6,7 +6,7 @@ import Text.JSON
 data Person = Person {
   name    :: String,
   surname :: String
-} deriving (Eq, Show)
+} deriving (Show, Read, Eq)
 
 
 instance JSON Person where
