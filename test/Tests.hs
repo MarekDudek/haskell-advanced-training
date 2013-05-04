@@ -7,7 +7,8 @@ import Test.HUnit
 
 import HAT.JSONTests as JSONTests
 import HAT.ReadTest as ReadTest
+import HAT.FunctorTest as FunctorTest
 
-allTests = ReadTest.tests ++ JSONTests.tests
+allTests = ReadTest.tests ++ JSONTests.tests ++ FunctorTest.tests
 
 main = defaultMain allTests

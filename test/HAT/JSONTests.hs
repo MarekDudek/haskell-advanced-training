@@ -13,6 +13,7 @@ import Text.JSON.Pretty
 
 import HAT.Person
 
+import Data.Functor
 
 person = Person "Marek" "Dudek"
 
@@ -47,6 +48,9 @@ jsStr = encode jsObj
 
 readPersonResult = readJSON personJsonObj :: Result Person
 (Ok readPerson) = readPersonResult
+
+nameResult    = name    <$> readPersonResult
+surnameResult = surname <$> readPersonResult
 
 shownPerson = showJSON person
 

@@ -13,15 +13,16 @@ instance JSON Person where
 
   readJSON (JSObject obj) = (
       return Person {
-        name    = getField "name",
-        surname = getField "surname"
+        name    = getField obj "name",
+        surname = getField obj "surname"
       }
-    ) where
-        getField field = 
-          let (Ok value) = field `valFromObj` obj in 
-          value 
+    )
 
   showJSON person = makeObj [
       ("name",    JSString $ toJSString $ name person),
       ("surname", JSString $ toJSString $ surname person)
-    ] 
+    ]
+
+getField object field =
+  let (Ok value) = field `valFromObj` object in
+  value
