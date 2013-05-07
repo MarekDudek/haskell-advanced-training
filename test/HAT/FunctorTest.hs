@@ -16,10 +16,12 @@ import Data.Functor
 square = (\x -> x^2)
 incremented = (\x -> x+1)
 capitalize = map toUpper
+max3 x y z = max x (max y z)
 
 -- helper declaration
 
 type EitherInt = Either String Int
+type EitherInt3Tuple = Either String (Int,Int,Int)
 
 instance Eq x => Eq (ZipList x) where
   ZipList xs == ZipList xs'  =  xs == xs'
@@ -70,7 +72,7 @@ tests = [
         assertEqual'  (Just 25)  ( fmap square (Just 5) )
       ),
       testCase "f-mapping over maybe with infix synonym" (
-        assertEqual'  (Just 25)  ( square <$> (Just 5) )
+        assertEqual'  (Just 25)  ( square <$> Just 5 )
       ),
       testCase "replacing location in Maybe" (
         assertEqual'  (Just 10)  ( 10 <$ (Just 5) )
@@ -78,21 +80,53 @@ tests = [
     ],
     testGroup "Maybe as applicative" [
       testCase "applying over maybe" (
-        assertEqual'  (Just 15)  ( Just (*3) <*> (Just 5) )
+        assertEqual'  (Just 25)  ( Just square <*> Just 5 )
       ),
       testCase "applying over maybe" (
-        assertEqual'  (Just 15)  ( (*) <$> Just (3) <*> (Just 5) )
+        assertEqual'  (Just 15)  ( Just (*3) <*> Just 5 )
+      ),
+      testCase "applying over maybe" (
+        assertEqual'  (Just 15)  ( (*) <$> Just 3 <*> Just 5 )
+      ),
+      testCase "applying over maybe" (
+        assertEqual'  (Just (1,2,3))  ((,,) <$> Just 1 <*> Just 2 <*> Just 3)
+      ),
+      testCase "applying over maybe" (
+        assertEqual'  (Just 3)  ( max3 <$> Just 1 <*> Just 2 <*> Just 3 )
       )
     ],
     testGroup "Either as functor" [
       testCase "f-mapping over Either" (
-        assertEqual'  (Right 25 :: EitherInt)  ( fmap square (Right 5 :: EitherInt) )
+        assertEqual'  (Right 25 :: EitherInt)  ( fmap square (Right 5) )
       ),
       testCase "f-mapping over Either with infix synonym" (
-        assertEqual'  (Right 25 :: EitherInt)  ( square <$> (Right 5 :: EitherInt) )
+        assertEqual'  (Right 25 :: EitherInt)  ( square <$> (Right 5) )
       ),
       testCase "replacing location in Either" (
-        assertEqual'  (Right 10 :: EitherInt)  ( 10 <$ (Right 5 :: EitherInt) )
+        assertEqual'  (Right 10 :: EitherInt)  ( 10 <$ (Right 5) )
+      )
+    ],
+    testGroup "Either as applicative" [
+      testCase "applying over Either" (
+        assertEqual'  (Right 25 :: EitherInt)  ( Right square <*> Right 5 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right 15 :: EitherInt)  ( Right (*) <*> Right 3 <*> Right 5 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right 15 :: EitherInt)  (       (*) <$> Right 3 <*> Right 5 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right (1,2,3) :: EitherInt3Tuple)  (       (,,) <$> Right 1 <*> Right 2 <*> Right 3 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right (1,2,3) :: EitherInt3Tuple)  ( Right (,,) <*> Right 1 <*> Right 2 <*> Right 3 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right 3 :: EitherInt)  ( Right max3 <*> Right 1 <*> Right 2 <*> Right 3 )
+      ),
+      testCase "applying over Either" (
+        assertEqual'  (Right 3 :: EitherInt)  (       max3 <$> Right 1 <*> Right 2 <*> Right 3 )
       )
     ],
     testGroup "Either as functor" [
@@ -111,7 +145,16 @@ tests = [
     ],
     testGroup "Function as applicative" [
       testCase "applying over function" (
-        assertEqual'  18  ((+) <$> (+3) <*> (*2) $ 5)
+        assertEqual'  18  ( (+) <$> (+3) <*> (*2) $ 5 )
+      ),
+      testCase "applying over function" (
+        assertEqual'  13  ( (+) <*> (+3) $ 5 )
+      ),
+      testCase "applying over function" (
+        assertEqual'  (8,10,32)  ( (,,) <$> (+3) <*> (*2) <*> (2^) $ 5 )
+      ),
+      testCase "applying over function" (
+        assertEqual'  32  ( max3 <$> (+3) <*> (*2) <*> (2^) $ 5 )
       )
     ]
   ]
